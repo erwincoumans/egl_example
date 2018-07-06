@@ -1,4 +1,4 @@
-//g++  ../bullet3/examples/ThirdPartyLibs/glad/egl.c ../bullet3/examples/ThirdPartyLibs/glad/gl.c egl.cpp -std=c++11 -I ../bullet3/examples/ThirdPartyLibs/glad/ -lpthread -ldl
+//g++  glad/egl.c glad/gl.c egl.cpp -I glad -lpthread -ldl
 #include <stdio.h>
 
 #include <stdio.h>
