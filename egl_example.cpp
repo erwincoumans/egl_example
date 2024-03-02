@@ -35,10 +35,29 @@ struct EGLInternalData2
 int main(int argc, char *argv[])
 {
     bool es2 = false;
+    int devindex = -1;
 
-    if(argc > 1 && !strcmp(argv[1], "es2"))
+    if (argc > 1)
     {
-        es2 = true;
+        for (int _i = 1; _i < argc; _i++)
+        {
+            if (!strcmp(argv[_i], "es2"))
+            {
+                es2 = true;
+            }
+            else if (!strcmp(argv[_i], "dev0"))
+            {
+                devindex = 0;
+            }
+            else if (!strcmp(argv[_i], "dev1"))
+            {
+                devindex = 1;
+            }
+            else if (!strcmp(argv[_i], "dev2"))
+            {
+                devindex = 2;
+            }
+        }
     }
 
     int m_windowWidth;
@@ -91,6 +110,15 @@ int main(int argc, char *argv[])
         egl_error != EGL_SUCCESS) {
         printf("eglQueryDevicesEXT Failed.\n");
         m_data->egl_display = EGL_NO_DISPLAY;
+    }
+
+    if (devindex != 0)
+    {
+        if (num_devices > devindex)
+        {
+            m_data->m_renderDevice = devindex; // explicit selection
+            printf("Explicit device selection: %d\n", devindex),
+        }
     }
 
     // Query EGL Screens
