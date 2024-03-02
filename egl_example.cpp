@@ -10,7 +10,8 @@
 #include  <glad/egl.h>
 #include  <glad/gl.h>
 
-struct EGLInternalData2 {
+struct EGLInternalData2
+{
     bool m_isInitialized;
 
     int m_windowWidth;
@@ -31,8 +32,33 @@ struct EGLInternalData2 {
     m_windowHeight(0) {}
 };
 
-int main(){
+int main(int argc, char *argv[])
+{
+    bool es2 = false;
+    int devindex = -1;
 
+    if (argc > 1)
+    {
+        for (int _i = 1; _i < argc; _i++)
+        {
+            if (!strcmp(argv[_i], "es2"))
+            {
+                es2 = true;
+            }
+            else if (!strcmp(argv[_i], "dev0"))
+            {
+                devindex = 0;
+            }
+            else if (!strcmp(argv[_i], "dev1"))
+            {
+                devindex = 1;
+            }
+            else if (!strcmp(argv[_i], "dev2"))
+            {
+                devindex = 2;
+            }
+        }
+    }
 
     int m_windowWidth;
     int m_windowHeight;
@@ -49,18 +75,15 @@ int main(){
     m_windowHeight = 256;
     m_renderDevice = -1;
 
-    EGLint egl_config_attribs[] = {EGL_RED_SIZE,
-        8,
-        EGL_GREEN_SIZE,
-        8,
-        EGL_BLUE_SIZE,
-        8,
-        EGL_DEPTH_SIZE,
-        8,
-        EGL_SURFACE_TYPE,
-        EGL_PBUFFER_BIT,
-        EGL_RENDERABLE_TYPE,
-        EGL_OPENGL_BIT,
+    int rbit = (es2 ? EGL_OPENGL_ES2_BIT : EGL_OPENGL_BIT);
+
+    EGLint egl_config_attribs[] = {
+        EGL_RED_SIZE, 8,
+        EGL_GREEN_SIZE, 8,
+        EGL_BLUE_SIZE, 8,
+        EGL_DEPTH_SIZE, 8,
+        EGL_SURFACE_TYPE, EGL_PBUFFER_BIT,
+        EGL_RENDERABLE_TYPE, rbit,
         EGL_NONE};
     
     EGLint egl_pbuffer_attribs[] = {
@@ -87,6 +110,15 @@ int main(){
         egl_error != EGL_SUCCESS) {
         printf("eglQueryDevicesEXT Failed.\n");
         m_data->egl_display = EGL_NO_DISPLAY;
+    }
+
+    if (devindex != -1)
+    {
+        if (num_devices > devindex)
+        {
+            m_data->m_renderDevice = devindex; // explicit selection
+            printf("Explicit device selection: %d\n", devindex);
+        }
     }
 
     // Query EGL Screens
@@ -137,7 +169,7 @@ int main(){
            GLAD_VERSION_MINOR(egl_version));
 
 
-    m_data->success = eglBindAPI(EGL_OPENGL_API);
+    m_data->success = eglBindAPI((es2 ? EGL_OPENGL_ES_API : EGL_OPENGL_API));
     if (!m_data->success) {
         // TODO: Properly handle this error (requires change to default window
         // API to change return on all window types to bool).
@@ -166,9 +198,14 @@ int main(){
         exit(EXIT_FAILURE);
     }
 
+    EGLint AttribList[] = 
+    {
+        EGL_CONTEXT_CLIENT_VERSION, 2,
+        EGL_NONE
+    };
 
     m_data->egl_context = eglCreateContext(
-                                           m_data->egl_display, m_data->egl_config, EGL_NO_CONTEXT, NULL);
+                                           m_data->egl_display, m_data->egl_config, EGL_NO_CONTEXT, (es2 ? AttribList : NULL));
     if (!m_data->egl_context) {
         fprintf(stderr, "Unable to create EGL context (eglError: %d)\n",eglGetError());
         exit(EXIT_FAILURE);
