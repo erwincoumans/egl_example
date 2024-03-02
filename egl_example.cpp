@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
         if (num_devices > devindex)
         {
             m_data->m_renderDevice = devindex; // explicit selection
-            printf("Explicit device selection: %d\n", devindex),
+            printf("Explicit device selection: %d\n", devindex);
         }
     }
 
