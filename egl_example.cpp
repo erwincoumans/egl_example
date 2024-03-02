@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
         m_data->egl_display = EGL_NO_DISPLAY;
     }
 
-    if (devindex != 0)
+    if (devindex != -1)
     {
         if (num_devices > devindex)
         {
