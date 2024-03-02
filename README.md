@@ -1,5 +1,5 @@
 # egl_example
-Creating an EGL + OpenGL(ES2) context using glad, dynamically loading the libraries, for headless rendering in the cloud.
+Creating an EGL + OpenGL(ES2) context using glad, dynamically loading the libraries, for headless rendering in the cloud. Added explicit device selection if the system has multiple devices.
 
 ## build and run ##
 ./build.sh
